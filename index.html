@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            background-color: gray;
+        }
+        .container {
+            background-color: white;
+            height: 500px;
+            width: 500px;
+            margin: 0 auto;
+            margin-top: 50px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <h4>Item Name:</h4>
+        <input type="text" id="Item">
+        <h4>Item Amount:</h4>
+        <input type="number" id="Amount">
+        <br><br>
+        <button onclick="Add()">Add Item</button>
+        <button onclick="Clear()">Clear All</button>
+        <br><br>
+        <h4>Total Amount Of Expenses:</h4>
+        <p id="totalAmount">0</p>
+        <ul id="itemList"></ul> <!-- New ul element to hold the list of items -->
+    </div>
+
+    <script>
+        function Add() {
+            var oldstring = localStorage.getItem("User");
+            var old = oldstring ? JSON.parse(oldstring) : [];
+            var Item = document.getElementById('Item').value;
+            var Amount = parseFloat(document.getElementById('Amount').value);
+            var newUser = {"Item": Item, "Amount": Amount };        
+            old.push(newUser);
+            localStorage.setItem("User", JSON.stringify(old));
+            displayTotalAmount();
+            displayItemList(); // Call the function to display the list of items
+        }
+        
+        function Clear() {
+            localStorage.removeItem("User");
+            displayTotalAmount();
+            displayItemList(); // Clear the list of items from the UI
+        }
+
+        function displayTotalAmount() {
+            var oldstring = localStorage.getItem("User");
+            var old = oldstring ? JSON.parse(oldstring) : [];
+            var total = 0;
+            for (var i = 0; i < old.length; i++) {
+                total += old[i].Amount;
+            }
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
+        function displayItemList() {
+            var oldstring = localStorage.getItem("User");
+            var old = oldstring ? JSON.parse(oldstring) : [];
+            var itemList = document.getElementById('itemList');
+            itemList.innerHTML = ''; // Clear previous items
+            for (var i = 0; i < old.length; i++) {
+                var li = document.createElement('li');
+                li.textContent = old[i].Item + ' - $' + old[i].Amount.toFixed(2);
+                itemList.appendChild(li);
+            }
+        }
+
+        displayTotalAmount();
+        displayItemList();
+    </script>
+</body>
+</html>
